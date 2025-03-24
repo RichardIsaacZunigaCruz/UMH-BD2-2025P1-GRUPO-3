@@ -1,1 +1,153 @@
 Grupo #3 
+Carlos Ariel Hernández Sánchez 202402123
+Richard Isaac Zuniga Cruz 202300108
+
+CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
+
+CREATE TABLE IF NOT EXISTS `mydb`.`Cliente` (
+  `idCliente` INT(11) NOT NULL,
+  `Nombre` VARCHAR(45) NULL DEFAULT NULL,
+  `Apellido` VARCHAR(45) NULL DEFAULT NULL,
+  `Organizacion` VARCHAR(45) NULL DEFAULT NULL,
+  `Cargo` VARCHAR(45) NULL DEFAULT NULL,
+  `Num_Pasaporte` INT(11) NULL DEFAULT NULL,
+  `Fecha_ Nacimiento` DATE NULL DEFAULT NULL,
+  `Nacionalidad` VARCHAR(45) NULL DEFAULT NULL,
+  `Direccion` VARCHAR(45) NULL DEFAULT NULL,
+  `Ciudad` VARCHAR(45) NULL DEFAULT NULL,
+  `Pais` VARCHAR(45) NULL DEFAULT NULL,
+  `Telefono` INT(11) NULL DEFAULT NULL,
+  `Fax` INT(11) NULL DEFAULT NULL,
+  `Correo_Electronico` VARCHAR(45) NULL DEFAULT NULL,
+  PRIMARY KEY (`idCliente`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `mydb`.`Hotel` (
+  `idHotel` INT(11) NOT NULL,
+  `Nombre_Hotel` VARCHAR(45) NULL DEFAULT NULL,
+  `Direccion_Hotel` VARCHAR(45) NULL DEFAULT NULL,
+  `Telefono_Hotel` INT(11) NULL DEFAULT NULL,
+  `Contacto_Hotel` VARCHAR(45) NULL DEFAULT NULL,
+  `Telefono_Contacto` INT(11) NULL DEFAULT NULL,
+  `Correo_Contacto` VARCHAR(45) NULL DEFAULT NULL,
+  PRIMARY KEY (`idHotel`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `mydb`.`Pago` (
+  `idPago` INT(11) NOT NULL,
+  `Tipo_Tarjeta_Credito` VARCHAR(45) NULL DEFAULT NULL,
+  `Num_Tarjeta_Credito` INT(11) NULL DEFAULT NULL,
+  `Fecha_Inicio_Tarjeta` DATE NULL DEFAULT NULL,
+  `Fecha_ Vecimiento_Tarjeta` DATE NULL DEFAULT NULL,
+  `Nombre_Titular` VARCHAR(45) NULL DEFAULT NULL,
+  `Firma_Titular` VARCHAR(45) NULL DEFAULT NULL,
+  PRIMARY KEY (`idPago`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `mydb`.`ReservaHabitacion` (
+  `idReservaHabitacion` INT(11) NOT NULL,
+  `Fecha_Arribo` DATE NULL DEFAULT NULL,
+  `Fecha_Salida` DATE NULL DEFAULT NULL,
+  `Num_Noches` INT(11) NULL DEFAULT NULL,
+  `Vuelo_Arribo` VARCHAR(45) NULL DEFAULT NULL,
+  `Vuelo_Salida` VARCHAR(45) NULL DEFAULT NULL,
+  `Early_Check_IN` VARCHAR(45) NULL DEFAULT NULL,
+  `Estado_Reserva` VARCHAR(45) NULL DEFAULT NULL,
+  `Cliente_idCliente` INT(11) NOT NULL,
+  `Hotel_idHotel` INT(11) NOT NULL,
+  `Pago_idPago` INT(11) NOT NULL,
+  `Habitaciones_idHabitaciones` INT(11) NOT NULL,
+  PRIMARY KEY (`idReservaHabitacion`),
+  INDEX `fk_Reserva de Habitacion_Cliente_idx` (`Cliente_idCliente` ASC) VISIBLE,
+  INDEX `fk_Reserva de Habitacion_Hotel1_idx` (`Hotel_idHotel` ASC) VISIBLE,
+  INDEX `fk_Reserva de Habitacion_Pago1_idx` (`Pago_idPago` ASC) VISIBLE,
+  INDEX `fk_Reserva de Habitacion_Habitaciones1_idx` (`Habitaciones_idHabitaciones` ASC) VISIBLE,
+  CONSTRAINT `fk_Reserva de Habitacion_Cliente`
+    FOREIGN KEY (`Cliente_idCliente`)
+    REFERENCES `mydb`.`Cliente` (`idCliente`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Reserva de Habitacion_Hotel1`
+    FOREIGN KEY (`Hotel_idHotel`)
+    REFERENCES `mydb`.`Hotel` (`idHotel`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Reserva de Habitacion_Pago1`
+    FOREIGN KEY (`Pago_idPago`)
+    REFERENCES `mydb`.`Pago` (`idPago`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Reserva de Habitacion_Habitaciones1`
+    FOREIGN KEY (`Habitaciones_idHabitaciones`)
+    REFERENCES `mydb`.`Habitaciones` (`idHabitaciones`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `mydb`.`Habitaciones` (
+  `idHabitaciones` INT(11) NOT NULL,
+  `Nombre_Habitacion` VARCHAR(45) NULL DEFAULT NULL,
+  `Cantidad_Habitacion` INT(11) NULL DEFAULT NULL,
+  `Cantidad_Personas` INT(11) NULL DEFAULT NULL,
+  `Tamaño_Habitacion` VARCHAR(45) NULL DEFAULT NULL,
+  `Tipo_Habitacion` VARCHAR(45) NULL DEFAULT NULL,
+  PRIMARY KEY (`idHabitaciones`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `mydb`.`Disponibilidad` (
+  `idDisponibilidad` INT(11) NOT NULL,
+  `Fecha` DATE NULL DEFAULT NULL,
+  `Habitaciones_Existentes` VARCHAR(45) NULL DEFAULT NULL,
+  `Habitaciones_Ocupadas` VARCHAR(45) NULL DEFAULT NULL,
+  `Habitaciones_Disponible` VARCHAR(45) NULL DEFAULT NULL,
+  `Habitaciones_idHabitaciones` INT(11) NOT NULL,
+  `Hotel_idHotel` INT(11) NOT NULL,
+  PRIMARY KEY (`idDisponibilidad`),
+  INDEX `fk_Disponibilidad_Habitaciones1_idx` (`Habitaciones_idHabitaciones` ASC) VISIBLE,
+  INDEX `fk_Disponibilidad_Hotel1_idx` (`Hotel_idHotel` ASC) VISIBLE,
+  CONSTRAINT `fk_Disponibilidad_Habitaciones1`
+    FOREIGN KEY (`Habitaciones_idHabitaciones`)
+    REFERENCES `mydb`.`Habitaciones` (`idHabitaciones`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Disponibilidad_Hotel1`
+    FOREIGN KEY (`Hotel_idHotel`)
+    REFERENCES `mydb`.`Hotel` (`idHotel`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `mydb`.`PrecioHabitacion` (
+  `idPrecioHabitacion` INT(11) NOT NULL,
+  `Precio Single` INT(11) NULL DEFAULT NULL,
+  `Precio_Doble` INT(11) NULL DEFAULT NULL,
+  `Precio_Twin` INT(11) NULL DEFAULT NULL,
+  `Moneda_Precio` VARCHAR(45) NULL DEFAULT NULL,
+  `Habitaciones_idHabitaciones` INT(11) NOT NULL,
+  `Hotel_idHotel` INT(11) NOT NULL,
+  PRIMARY KEY (`idPrecioHabitacion`),
+  INDEX `fk_Precio Habitacion_Habitaciones1_idx` (`Habitaciones_idHabitaciones` ASC) VISIBLE,
+  INDEX `fk_Precio Habitacion_Hotel1_idx` (`Hotel_idHotel` ASC) VISIBLE,
+  CONSTRAINT `fk_Precio Habitacion_Habitaciones1`
+    FOREIGN KEY (`Habitaciones_idHabitaciones`)
+    REFERENCES `mydb`.`Habitaciones` (`idHabitaciones`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Precio Habitacion_Hotel1`
+    FOREIGN KEY (`Hotel_idHotel`)
+    REFERENCES `mydb`.`Hotel` (`idHotel`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
