@@ -1,0 +1,64 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
+-- -----------------------------------------------------
+-- Schema hotel
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema hotel
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `hotel` DEFAULT CHARACTER SET latin1 ;
+USE `mydb` ;
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Cliente`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mydb`.`Cliente` ;
+
+CREATE TABLE IF NOT EXISTS `mydb`.`Cliente` (
+  `idCliente` INT NOT NULL,
+  `Nombre` VARCHAR(45) NULL,
+  `Apellido` VARCHAR(45) NULL,
+  `Organizacion` VARCHAR(45) NULL,
+  `Cargo` VARCHAR(45) NULL,
+  `Num_Pasaporte` INT NULL,
+  `Fecha_ Nacimiento` DATE NULL,
+  `Nacionalidad` VARCHAR(45) NULL,
+  `Direccion` VARCHAR(45) NULL,
+  `Ciudad` VARCHAR(45) NULL,
+  `Pais` VARCHAR(45) NULL,
+  `Telefono` INT NULL,
+  `Fax` INT NULL,
+  `Correo_Electronico` VARCHAR(45) NULL,
+  PRIMARY KEY (`idCliente`))
+ENGINE = InnoDB;
+-- -----------------------------------------------------
+-- Table `hotel`.`t_log_insercion`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `hotel`.`t_log_insercion` ;
+
+CREATE TABLE IF NOT EXISTS `hotel`.`t_log_insercion` (
+  `idlog` INT(11) NULL DEFAULT NULL,
+  `fecha` DATETIME NULL DEFAULT NULL,
+  `tip_evento` VARCHAR(45) NULL DEFAULT NULL,
+  `datos` VARCHAR(4000) NULL DEFAULT NULL)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+USE `hotel` ;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
