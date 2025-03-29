@@ -1,0 +1,54 @@
+Integrantes Grupo#3:
+
+Richard Isaac Zuniga Cruz 202300108
+
+
+delimiter //
+drop if exists trigger tgr_log_insercion;
+
+delimiter //
+create trigger hotel.trg_log_insercion before insert on hotel
+for each row
+begin
+ declare v_datos varchar(100000);
+ 
+ set v_datos := concat( new.IdCliente, ',' ,new.Nombre, ',' , new.Apellido, ',', new.Organizacion,',',new.Cargo,',',new.Num_Pasaporte, ',' ,new.Fecha_Nacimiento,',', new.Nacionalidad,',',new.Direccion,',', new.Ciudad,',',new.Pais,',',new.Telefono, ',' ,new.Fax,',', new.Correo_Electronico);
+ 
+ insert into t_log_insercion( fecha, tip_evento,datos)
+ values( now(), 'INSERCION', v_datos);
+end; //
+
+delimiter //
+create table hotel.t_log_insercion (
+ idlog int,
+ fecha datetime, 
+ tip_evento varchar(45),
+ datos varchar (100000) 
+ );
+ 
+delimiter //
+Create table if not exists hotel.cliente(
+ IdCliente int auto_increment primary key,
+ Nombre varchar(45),
+ Apellido varchar(45),
+ Organizacion varchar (45),
+ Cargo varchar(45),
+ Num_Pasaporte int,
+ Fecha_Nacimiento date,
+ Nacionalidad varchar (45),
+ Direccion varchar (45),
+ Ciudad varchar(45),
+ Pais varchar(45),
+ Telefono int,
+ Fax int,
+ Correo_Electronico varchar(45)
+);
+
+ Insert into hotel.cliente(Nombre,Apellido,Organizacion,Cargo,Num_Pasaporte,Fecha_Nacimiento,Nacionalidad, Direccion,Ciudad, Pais,Telefono,Fax,Correo_Electronico)
+ values
+('Norma','Sanchez','Cliente Mayorista','Activo','0298535','1981-02-30','Britanico','Bulevar Suyapa','Reino Unido','Londres','99362156','+44 96345618','NormaSanchez@gmail.com');
+ 
+ delete from hotel.cliente where IdCliente=7;
+ 
+ select*from hotel.t_log_insercion;
+ select* from hotel.cliente;
