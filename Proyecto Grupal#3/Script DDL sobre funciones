@@ -1,0 +1,86 @@
+-- Función para generar código de reserva único
+-- =============================
+-- FUNCIONES Y PROCEDIMIENTOS
+-- =============================
+-- Función para verificar disponibilidad
+DELIMITER //
+CREATE FUNCTION VerificarDisponibilidad(
+    p_id_hotel INT,
+    p_id_tipo_habitacion INT,
+    p_fecha_ingreso DATE,
+    p_fecha_salida DATE
+) RETURNS BOOLEAN
+BEGIN
+    DECLARE esta_disponible BOOLEAN DEFAULT TRUE;
+    DECLARE fecha_actual DATE;
+    DECLARE disponibles INT;
+    
+    SET fecha_actual = p_fecha_ingreso;
+    
+    -- Verificar disponibilidad para cada día del rango de fechas
+    WHILE fecha_actual < p_fecha_salida AND esta_disponible = TRUE DO
+        SELECT habitaciones_disponibles INTO disponibles
+        FROM DisponibilidadHabitacion
+        WHERE id_hotel = p_id_hotel
+        AND id_tipo_habitacion = p_id_tipo_habitacion
+        AND fecha = fecha_actual;
+        
+        IF disponibles IS NULL OR disponibles <= 0 THEN
+            SET esta_disponible = FALSE;
+        END IF;
+        
+        SET fecha_actual = DATE_ADD(fecha_actual, INTERVAL 1 DAY);
+    END WHILE;
+    
+    RETURN esta_disponible;
+END //
+DELIMITER ;
+
+-- Función para calcular el número de noches
+DELIMITER //
+CREATE FUNCTION CalcularNoches(
+    p_fecha_ingreso DATE,
+    p_fecha_salida DATE
+) RETURNS INT
+BEGIN
+    RETURN DATEDIFF(p_fecha_salida, p_fecha_ingreso);
+END //
+DELIMITER ;
+
+-- Procedimiento para actualizar disponibilidad al crear o cancelar una reserva
+DELIMITER //
+CREATE PROCEDURE ActualizarDisponibilidad(
+    p_id_hotel INT,
+    p_id_tipo_habitacion INT,
+    p_fecha_ingreso DATE,
+    p_fecha_salida DATE,
+    p_incrementar BOOLEAN -- TRUE para incrementar ocupación (nueva reserva), FALSE para decrementar (cancelación)
+)
+BEGIN
+    DECLARE fecha_actual DATE;
+    SET fecha_actual = p_fecha_ingreso;
+    
+    -- Actualizar cada día del rango de fechas
+    WHILE fecha_actual < p_fecha_salida DO
+        IF p_incrementar THEN
+            -- Incrementar ocupación (nueva reserva)
+            UPDATE DisponibilidadHabitacion
+            SET habitaciones_ocupadas = habitaciones_ocupadas + 1,
+                habitaciones_disponibles = habitaciones_disponibles - 1
+            WHERE id_hotel = p_id_hotel
+            AND id_tipo_habitacion = p_id_tipo_habitacion
+            AND fecha = fecha_actual;
+        ELSE
+            -- Decrementar ocupación (cancelación)
+            UPDATE DisponibilidadHabitacion
+            SET habitaciones_ocupadas = habitaciones_ocupadas - 1,
+                habitaciones_disponibles = habitaciones_disponibles + 1
+            WHERE id_hotel = p_id_hotel
+            AND id_tipo_habitacion = p_id_tipo_habitacion
+            AND fecha = fecha_actual;
+        END IF;
+        
+        SET fecha_actual = DATE_ADD(fecha_actual, INTERVAL 1 DAY);
+    END WHILE;
+END //
+DELIMITER ;
