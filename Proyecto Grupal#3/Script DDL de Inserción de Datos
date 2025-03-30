@@ -1,0 +1,169 @@
+Grupo#3
+Richard Isaac Zuniga Cruz 202300108
+
+delimiter //
+drop table hotel.Cliente;
+-- Tabla cliente
+Create table hotel.Cliente(
+ IdCliente int auto_increment primary key,
+ Nombre varchar(45),
+ Apellido varchar(45),
+ Organizacion varchar (45),
+ Cargo varchar(45),
+ Num_Pasaporte int,
+ Fecha_Nacimiento date,
+ Nacionalidad varchar (45),
+ Direccion varchar (45),
+ Ciudad varchar(45),
+ Pais varchar(45),
+ Telefono int,
+ Fax int,
+ Correo_Electronico varchar(45)
+);
+
+/*Insertar registros del cliente*/
+
+Insert into hotel.Cliente(Nombre,Apellido,Organizacion,Cargo,Num_Pasaporte,Fecha_Nacimiento,Nacionalidad, Direccion,Ciudad, Pais,Telefono,Fax,Correo_Electronico)
+values
+('Juan','Lopez','Cliente Institucional','Ocasional','0100001','1987-05-23','Chileno','Col.Torocagua','Santiago de Chile','Chile','96788834','+56 978-453-231','Juanlopez@gmail.com'),
+('Miguel','Cruz','Cliente Detallista','Potencial','0100002','1999-10-21','Chileno','Bulevar Suyapa','Santiago de Chile','Chile','98673466','+56 992-193-135','MiguelCruz@gmail.com'),
+('Rosalinda','Gomez','Cliente Mayorista','Ocasional','0102394','2000-07-11','Estadounidense','Bulevar Suyapa','California','Estados Unidos','96087745','+555-234-5673','RosalindaGomez@gmail.com'),
+('Nicolas','Torres','Cliente Detallista','Activo','0124335','1995-09-02','Brasileña','Col.San Miguel','Rio de Janeiro','Brasil','91235476','+55-9983-9255','NicolasTorres@gmail.com')
+
+select*from hotel.Cliente;
+
+delimiter //
+drop table hotel.pago;
+
+-- Tabla pago
+delimiter //
+Create table hotel.pago(
+ IdPago int auto_increment primary key,
+ Tipo_Tarjeta_Credito varchar (45),
+ Num_Tarjeta_credito decimal(50),
+ Fecha_Inicio_Tarjeta date,
+  Fecha_Vencimiento_Tarjeta date,
+ Nombre_Titular varchar (45),
+ Firma_Titular varchar(45)
+);
+
+/*Insertar Datos de Pago*/
+Insert into hotel.pago(Tipo_Tarjeta_Credito,Num_Tarjeta_credito,Fecha_Inicio_Tarjeta, Fecha_Vencimiento_Tarjeta ,Nombre_Titular,Firma_Titular)
+values
+('VISA','0294735629472113','2024-08-23','2025-04-12','Juan Lopez','JuanGrabielLopez'),
+('Diners','7825371046027452','2024-04-03','2025-06-11','Miguel Cruz','MiguelFernandoCruz'),
+('Amex','1340679263771935','2023-07-22','2025-04-01','Rosalinda Gomez','RosalindaGomez'),
+('Mastercard','7965743738875890','2024-01-25','2025-03-23','Nicolas Torres','NicolasMartinezTorres')
+
+select*from hotel.pago;
+
+-- Tabla Hotel
+delimiter //
+CREATE TABLE hotel.Hotel (
+    id_hotel INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_hotel VARCHAR(150) NOT NULL,
+    direccion_hotel VARCHAR(200),
+    contacto_nombre VARCHAR(100),
+    contacto_cargo VARCHAR(100),
+    telefono VARCHAR(30),
+    fax VARCHAR(30),
+    email VARCHAR(150),
+    activo BOOLEAN DEFAULT TRUE
+);
+
+-- Insertar datos iniciales de Hoteles
+INSERT INTO hotel.Hotel (nombre_hotel, direccion_hotel, contacto_nombre, contacto_cargo, telefono, fax, email) VALUES 
+('Plaza San Francisco', 'Alameda 123, Santiago', 'Carmen Angulo', 'Jefa de Convenciones', '56-2-360 4488', '56-2-360 4486', 'cangulo@plazasanfrancisco.cl'),
+('Caesar Business Santiago', 'Av. Kennedy 100, Santiago', 'Victor Hernández', 'Reservas', '56-2-595 6708', '56-2-595 6704', 'reservas.cbsac@caesarbusiness.com'),
+('Sheraton Santiago', 'Av. Santa María 1742, Santiago', 'María José Castillo', 'Coord. de Grupos', '56-2-707 0690', '56-2-707 0108', 'maria.castillo@sheraton.com'),
+('San Cristóbal Tower', 'Av. Santa María 1742, Santiago', 'María José Castillo', 'Coord. de Grupos', '56-2-707 0690', '56-2-707 0108', 'maria.castillo@sheraton.com');
+
+-- Tabla TipoHabitacion
+delimiter //
+CREATE TABLE hotel.TipoHabitacion (
+    id_tipo_habitacion INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_tipo VARCHAR(50) NOT NULL,
+    descripcion TEXT,
+    capacidad INT DEFAULT 1
+);
+-- Insertar datos iniciales de Tipos de Habitaciones
+INSERT INTO hotel.TipoHabitacion (nombre_tipo, descripcion) VALUES
+('Standard', 'Habitación básica con todas las comodidades esenciales'),
+('Classic', 'Habitación con diseño tradicional y comodidades adicionales'),
+('Grand Deluxe', 'Habitación de lujo con servicios exclusivos y amplio espacio');
+
+-- Tabla Precio Habitacion
+delimiter //
+CREATE TABLE hotel.PrecioHabitacion (
+    id_precio INT AUTO_INCREMENT PRIMARY KEY,
+    id_hotel INT NOT NULL,
+    id_tipo_habitacion INT NOT NULL,
+    precio_single DECIMAL(10,2) NOT NULL,
+    precio_doble DECIMAL(10,2) NOT NULL,
+    precio_twin DECIMAL(10,2) NOT NULL,
+    moneda VARCHAR(3) DEFAULT 'USD',
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_hotel) REFERENCES Hotel(id_hotel),
+    FOREIGN KEY (id_tipo_habitacion) REFERENCES TipoHabitacion(id_tipo_habitacion)
+);
+-- Insertar datos iniciales de Precios por Habitación
+INSERT INTO hotel.PrecioHabitacion (id_hotel, id_tipo_habitacion, precio_single, precio_doble, precio_twin, moneda) VALUES
+(1, 1, 125, 145, 145, 'USD'), -- Plaza San Francisco - Standard
+(2, 1, 110, 120, 120, 'USD'), -- Caesar Business - Standard
+(3, 2, 155, 155, 155, 'USD'), -- Sheraton - Classic
+(4, 3, 190, 190, 190, 'USD'); -- San Cristóbal - Grand Deluxe
+
+
+-- Tabla DisponibilidadHabitacion
+CREATE TABLE hotel.PrecioDisponibilidad (
+    id_disponibilidad INT AUTO_INCREMENT PRIMARY KEY,
+    id_hotel INT NOT NULL,
+    id_tipo_habitacion INT NOT NULL,
+    fecha DATE NOT NULL,
+    habitaciones_existentes INT NOT NULL,
+    habitaciones_ocupadas INT NOT NULL DEFAULT 0,
+    habitaciones_disponibles INT GENERATED ALWAYS AS (habitaciones_existentes - habitaciones_ocupadas) STORED,
+    temporada ENUM('alta', 'baja', 'especial') DEFAULT 'baja',
+    FOREIGN KEY (id_hotel) REFERENCES Hotel(id_hotel),
+    FOREIGN KEY (id_tipo_habitacion) REFERENCES TipoHabitacion(id_tipo_habitacion),
+    UNIQUE KEY disponibilidad_fecha_unique (id_hotel, id_tipo_habitacion, fecha)
+);
+
+INSERT INTO hotel.PrecioHabitacion (id_disponibilidad, fecha, habitaciones_existentes, habitaciones_ocupadas, habitaciones_disponibles,temporada) VALUES
+(1, , 2024-08-23,'lleno','vacio', 'SI','alta'), 
+(2, , 2025-07-04,'lleno','lleno', 'No','baja'), 
+(3, , 2023-06-11,'Vacio','vacio', 'SI','especial'), 
+(4, , 2025-09-14,'lleno','lleno', 'SI','alta');
+
+select*from hotel.PrecioHabitacion;
+
+-- Tabla Reserva
+
+CREATE TABLE hotel.Reserva (
+    id_reserva INT AUTO_INCREMENT PRIMARY KEY,
+    codigo_reserva VARCHAR(15) UNIQUE,
+    id_participante INT NOT NULL,
+    id_hotel INT NOT NULL,
+    id_tipo_habitacion INT NOT NULL,
+    id_habitacion INT,
+    fecha_arribo DATE NOT NULL,
+    fecha_salida DATE NOT NULL,
+    num_noches INT GENERATED ALWAYS AS (DATEDIFF(fecha_salida, fecha_arribo)) STORED,
+    vuelo_arribo VARCHAR(50),
+    vuelo_salida VARCHAR(50),
+    early_check_in BOOLEAN DEFAULT FALSE,
+    estado_reserva ENUM('pendiente', 'confirmada', 'check-in', 'check-out', 'cancelada') DEFAULT 'pendiente',
+    notas TEXT,
+    fecha_reserva TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_participante) REFERENCES Participante(id_participante),
+    FOREIGN KEY (id_hotel) REFERENCES Hotel(id_hotel),
+    FOREIGN KEY (id_tipo_habitacion) REFERENCES TipoHabitacion(id_tipo_habitacion),
+    FOREIGN KEY (id_habitacion) REFERENCES Habitacion(id_habitacion)
+);
+INSERT INTO hotel.Reserva (id_habitacion,fecha_arribo,fecha_salida, num_noches, vuelo_arribo,vuelo_salida, early_check_in, estado_reversa, notas, fecha_reserva) VALUES
+(1, , 2024-01-21,'2024-01-22','89678', 'F-103','GH-3','Si','Pendiente','Ninguna','2024-01-08'), 
+(2, , 2024-05-19,'2024-05-20','62971', 'H-189','KO-31','Si','check-out','Ninguna','2024-04-18'), 
+(3, , 2024-06-12,'2024-06-13','93820', 'BG-098','BA-25','NO','cancelada','Ninguna','2024-05-22'), 
+(4, , 2024-07-04,'2024-07-05','19728', 'L-112','HJ-36','Si','Pendiente','Ninguna','2024-06-11'), 
+
+select*from hotel.Reserva;
